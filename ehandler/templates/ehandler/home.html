@@ -1,0 +1,17 @@
+{% extends "ehandler/base.html" %}
+<div class="container">
+    {% block content %}
+    {% for event in events %}
+    <article class="media content-section">
+        <div class="media-body">
+            <div class="article-metadata">
+                <a class="mr-2" href="#">{{ event.eowner }}</a>
+                <small class="text-muted">{{ event.edate|date:"F d, Y" }}</small>
+            </div>
+            <h2><a class="article-title" href="#">{{ event.ename }}</a></h2>
+            <p class="article-content">{{ event.econtent }}</p>
+        </div>
+    </article>
+    {% endfor %}
+    {% endblock content %}
+</div>
