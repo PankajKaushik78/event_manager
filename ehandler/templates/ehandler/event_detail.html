@@ -14,6 +14,9 @@
         </div>
         <h2 class="article-title">{{ object.ename }}</h2>
         <p class="article-content">{{ object.econtent }}</p>
+        {% if object.eowner != user %}
+        <p class="alert alert-primary">Event joining code is:{{object.ecode}}</p>
+        {% endif %}
     </div>
 </article>
 {% endblock content %}
