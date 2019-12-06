@@ -1,0 +1,28 @@
+{% extends "ehandler/base.html" %}
+{% block content %}
+<br>
+<h2><strong>Analysis of {{event.ename}}</strong></h2><br>
+
+<ul class="list-group">
+    <li class="list-group-item"><strong>Owner of the event: </strong>{{user}}</li>
+    <li class="list-group-item"><strong>Timing of the event: </strong>{{event.edate}}</li>
+    <li class="list-group-item"><strong>Total attendees: </strong>{{total_attendees}}</li>
+    <li class="list-group-item"><strong>Total helpers: </strong>{{total_helpers}} </li>
+</ul><br>
+<hr>
+
+<h3>List of Attendees.</h3>
+<ul class="list-group">
+    {% for person in attendees %}
+    <li class="list-group-item"><strong>{{ person }}</strong></li>
+    {% endfor %}
+</ul><br>
+<hr>
+
+<h3>Contact of helpers</h3>
+<ul class="list-group">
+    {% for help in helpers %}
+    <li class="list-group-item"><strong>{{ help }}</strong><br><strong>Email: </strong>{{help.email}}</li>
+    {% endfor %}
+</ul>
+{% endblock content %}

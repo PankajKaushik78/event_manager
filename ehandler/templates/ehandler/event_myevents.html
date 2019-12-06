@@ -1,0 +1,21 @@
+{% extends "ehandler/base.html" %}
+{% block content %}
+<h2>Click on event name to get analytics</h2>
+{% for event in events %}
+{% if event.eowner == user %}
+<article class="media content-section">
+    <div class="media-body">
+        <div class="article-metadata">
+            <a class="mr-2" href="#">{{ event.eowner }}</a>
+            <small class="text-muted">{{ event.edate|date:"F d, Y" }}</small>
+        </div>
+        <h2><a class="article-title" href="{% url 'ehandler:user-event-analysis' event.id %}">{{ event.ename }}</a>
+        </h2>
+        <p class="article-content">{{ event.econtent }}</p>
+        <a class="btn btn-secondary btn-sm mt-1 mb-1" href="{% url 'ehandler:user-event-analysis' event.id %}">Get Event
+            Analytics</a>
+    </div>
+</article>
+{% endif %}
+{% endfor %}
+{% endblock content %}

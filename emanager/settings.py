@@ -125,5 +125,5 @@ STATIC_URL = '/static/'
 
 CRISPY_TEMPLATE_PACK = 'bootstrap4'
 
-LOGIN_REDIRECT_URL = 'ehandler-home'
+LOGIN_REDIRECT_URL = 'ehandler:ehandler-home'
 LOGIN_URL = 'login'
