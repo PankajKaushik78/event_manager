@@ -1,17 +1,26 @@
 {% extends "ehandler/base.html" %}
+{% block content %}
+
+<!-- <div class="col-md-8"> -->
 <div class="container">
-    {% block content %}
     {% for event in events %}
     <article class="media content-section">
         <div class="media-body">
+            <h2><a class="article-title" href="{% url 'ehandler:event-detail' event.id %}">{{ event.ename }}</a>
+            </h2>
             <div class="article-metadata">
-                <a class="mr-2" href="#">{{ event.eowner }}</a>
-                <small class="text-muted">{{ event.edate|date:"F d, Y" }}</small>
+                <small class="text-muted"><strong>Start Date: </strong>{{ event.edate|date:"F d, Y" }} </small><br>
+                <small class="text-muted"><strong>End date: </strong>{{ event.eenddate|date:"F d, Y" }}</small><br>
+                <small class="mr-2" href="#"><strong>Event Organiser: </strong>{{ event.eowner }}</small>
+
             </div>
-            <h2><a class="article-title" href="{% url 'ehandler:event-detail' event.id %}">{{ event.ename }}</a></h2>
             <p class="article-content">{{ event.econtent }}</p>
+            <a class="btn btn-success btn-sm mt-1 mb-1" href="{% url 'ehandler:event-detail' event.id %}"
+                role="button">Check it out</a>
         </div>
     </article>
     {% endfor %}
-    {% endblock content %}
+
 </div>
+<!-- </div> -->
+{% endblock content %}

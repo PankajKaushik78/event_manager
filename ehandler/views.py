@@ -37,8 +37,7 @@ def event_analysis(request, pk):
         'attendees': attendees,
         'helpers': helpers,
         'total_attendees': total_attendees,
-        'total_helpers': total_helpers
-
+        'total_helpers': total_helpers,
     }
     return render(request, 'ehandler/event_analysis.html', context)
 
@@ -86,7 +85,7 @@ class EventDetailView(DetailView):
 
 class EventCreateView(LoginRequiredMixin, CreateView):
     model = Event
-    fields = ['ename', 'econtent', 'edate']
+    fields = ['ename', 'econtent', 'edate', 'eenddate']
 
     def form_valid(self, form):
         form.instance.eowner = self.request.user
@@ -98,7 +97,7 @@ class EventCreateView(LoginRequiredMixin, CreateView):
 
 class EventUpdateView(LoginRequiredMixin, UserPassesTestMixin, UpdateView):
     model = Event
-    fields = ['ename', 'econtent', 'edate']
+    fields = ['ename', 'econtent', 'edate', 'eenddate']
 
     def form_valid(self, form):
         form.instance.eowner = self.request.user

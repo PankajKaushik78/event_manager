@@ -10,11 +10,14 @@ from django.utils import timezone
 
 
 class Event(models.Model):
-    ename = models.CharField(max_length=100)
-    econtent = models.TextField()
-    edate = models.DateTimeField()
+    ename = models.CharField(max_length=100, verbose_name="Event Title")
+    econtent = models.TextField(verbose_name="Event Details")
+    edate = models.DateTimeField(verbose_name="Event Start date (YY-MM-DD)")
+    eenddate = models.DateTimeField(
+        verbose_name="Event End date (YY-MM-DD)")
     eowner = models.ForeignKey(User, on_delete=models.CASCADE)
-    eattendees = models.ManyToManyField(User, related_name='attendees')
+    eattendees = models.ManyToManyField(
+        User, related_name='attendees')
     ecode = models.CharField(max_length=120, blank=True)
     ehelpers = models.ManyToManyField(User, related_name='helpers')
 
