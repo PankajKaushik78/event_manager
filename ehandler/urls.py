@@ -1,4 +1,4 @@
-from django.urls import path
+from django.urls import path, include
 from django.conf.urls import url
 from . import views as ehandler_views
 from .views import (
@@ -12,10 +12,18 @@ from .views import (
 
 app_name = "ehandler"
 
+# event_patterns = ([
+#     path('<int:pk>/update/', EventUpdateView.as_view(), name='event-update'),
+#     path('new/', EventCreateView.as_view(),
+#          name='event-create'),
+# ], 'ehandler')
+
 urlpatterns = [
     path('', EventListView.as_view(), name='ehandler-home'),
     path('event/<int:pk>/', EventDetailView.as_view(), name='event-detail'),
-    path('event/new/', EventCreateView.as_view(), name='event-create'),
+    # path('event/', include(event_patterns)),
+    path('event/new/', EventCreateView.as_view(),
+         name='event-create'),
     path('event/<int:pk>/update/', EventUpdateView.as_view(), name='event-update'),
     path('event/<int:pk>/delete/', EventDeleteView.as_view(), name='event-delete'),
     path('event/<int:pk>/attend/',

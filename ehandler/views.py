@@ -92,6 +92,9 @@ class EventCreateView(LoginRequiredMixin, CreateView):
         form.instance.eowner = self.request.user
         return super().form_valid(form)
 
+    def get_success_url(self):
+        return reverse("ehandler:event-detail", kwargs={'pk': self.object.pk})
+
 
 class EventUpdateView(LoginRequiredMixin, UserPassesTestMixin, UpdateView):
     model = Event
@@ -106,6 +109,9 @@ class EventUpdateView(LoginRequiredMixin, UserPassesTestMixin, UpdateView):
         if self.request.user == event.eowner:
             return True
         return False
+
+    def get_success_url(self):
+        return reverse("ehandler:event-detail", kwargs={'pk': self.object.pk})
 
 
 class EventDeleteView(LoginRequiredMixin, UserPassesTestMixin, DeleteView):
