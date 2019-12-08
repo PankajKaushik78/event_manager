@@ -2,11 +2,13 @@ from django.shortcuts import render, redirect
 from django.contrib import messages
 from django.db import IntegrityError
 from django.http import HttpResponse
-from django.shortcuts import get_object_or_404, render_to_response
 from .models import Event, EventRegistration
 from django.urls import reverse
 from django.views.generic.edit import FormView
+from django.contrib.auth.decorators import login_required
+# from .forms import CodeCheckForm
 from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
+from django.contrib.auth.decorators import login_required
 from django.views.generic import (
     ListView,
     DetailView,
@@ -14,9 +16,6 @@ from django.views.generic import (
     UpdateView,
     DeleteView
 )
-from django.contrib.auth.decorators import login_required
-
-# from .forms import CodeCheckForm
 
 
 def home(request):
@@ -24,6 +23,8 @@ def home(request):
         'events': Event.objects.all()
     }
     return render(request, 'ehandler/home.html', context)
+
+# View for analysis of a particular event
 
 
 def event_analysis(request, pk):
@@ -41,29 +42,62 @@ def event_analysis(request, pk):
     }
     return render(request, 'ehandler/event_analysis.html', context)
 
-# FUNCTION VIEW FOR CODE CHECK
-# class CodeCheck(FormView):
-#     template_name = "ehandler/event_join.html"
-#     form_class = CodeCheckForm
-#     model = Event
-#     success_url = "ehandler/home.html"
+
+@login_required
+def event_add_attendance(request, pk):
+    try:
+        this_event = Event.objects.get(pk=pk)
+        if request.method == 'POST':
+            # form = CodeCheckForm(request.POST)
+            code = request.POST.get('code')
+            if code == this_event.ecode:
+                user = request.user
+                # this_event = Event.objects.get(pk=pk)
+                this_event.add_user_to_list_of_attendees(user=user)
+                this_event.eattendees.add(user)
+                messages.success(
+                    request, f'You have been added to attendee list of {this_event.ename}')
+                return redirect("ehandler:event-detail", pk=pk)
+            elif code != this_event.ecode:
+                messages.warning(
+                    request, f'Please enter the correct event code')
+                return redirect("ehandler:event-detail", pk=pk)
+        # else:
+        #     form = CodeCheckForm()
+        return render(request, "ehandler/event_detail.html")
+
+    except IntegrityError:
+        messages.add_message(request, messages.INFO,
+                             "You are already in the attendee list")
+        return redirect("ehandler:event-detail", pk=pk)
 
 
-# def code_check(request, pk):
-#     form = CodeCheckForm(request.POST or None)
-#     event = get_object_or_404(Event, pk=pk)
-#     if form.is_valid:
-#         event = event.ecode
-#         ecode = request.POST.get("ecode")
-#         # if ecode != event.ecode:
-#         #     form = CodeCheckForm()
-#         # else:
-#         #     messages.success(request, f'Welcome to the event!')
-#         return redirect(reverse('event-detail', pk=event.pk))
-#     else:
-#         form = CodeCheckForm()
+@login_required
+def event_cancel_attendance(request, pk):
+    try:
+        user = request.user
+        this_event = Event.objects.get(pk=pk)
+        this_event.remove_user_from_list_of_attendees(request.user)
+        this_event.eattendees.remove(user)
+        messages.warning(
+            request, f'You have been removed from attendee list of {this_event.ename}!')
+        return redirect("ehandler:event-detail", pk=pk)
+    except Exception:
+        messages.add_message(request, messages.INFO,
+                             "You are not in the attendee list")
+        return redirect("ehandler:event-detail", pk=pk)
 
-#     return render(request, 'ehandler/event_join.html', {'form': form})
+
+@login_required
+def event_add_helper(request, pk):
+    # try:
+    user = request.user
+    this_event = Event.objects.get(pk=pk)
+    this_event.ehelpers.add(user)
+    messages.success(
+        request, f'Thanks for helping in organising {this_event.ename}! We will contact you soon')
+    return redirect("ehandler:event-detail", pk=pk)
+
 
 class UserEventListView(ListView, LoginRequiredMixin):
     model = Event
@@ -124,48 +158,20 @@ class EventDeleteView(LoginRequiredMixin, UserPassesTestMixin, DeleteView):
         return False
 
 
-@login_required
-def event_add_attendance(request, pk):
-    try:
-        user = request.user
-        this_event = Event.objects.get(pk=pk)
-        this_event.add_user_to_list_of_attendees(user=user)
-        this_event.eattendees.add(user)
-        messages.success(
-            request, f'You have been added to attendee list of {this_event.ename}')
-        return redirect("ehandler:event-detail", pk=pk)
-    except IntegrityError:
-        messages.add_message(request, messages.INFO,
-                             "You are already in the attendee list")
-        return redirect("ehandler:event-detail", pk=pk)
-
-
-@login_required
-def event_cancel_attendance(request, pk):
-    try:
-        user = request.user
-        this_event = Event.objects.get(pk=pk)
-        this_event.remove_user_from_list_of_attendees(request.user)
-        this_event.eattendees.remove(user)
-        messages.warning(
-            request, f'You have been removed from attendee list of {this_event.ename}!')
-        return redirect("ehandler:event-detail", pk=pk)
-    except Exception:
-        messages.add_message(request, messages.INFO,
-                             "You are not in the attendee list")
-        return redirect("ehandler:event-detail", pk=pk)
-
-
-@login_required
-def event_add_helper(request, pk):
-    # try:
-    user = request.user
-    this_event = Event.objects.get(pk=pk)
-    this_event.ehelpers.add(user)
-    messages.success(
-        request, f'Thanks for helping in organising {this_event.ename}!')
-    return redirect("ehandler:event-detail", pk=pk)
-    # except Exception:
-    #     messages.add_message(request, messages.INFO,
-    #                          "You are not in the attendee list")
-    #     return redirect("ehandler:event-detail", pk=pk)
+# def event_join_code(request):
+#     # if request.method == 'POST':
+#     #     code = request.POST.get('code')
+#     #     event_codes = Event.objects.values_list('ecode', flat=True)
+#     #     if code in event_codes:
+#     #         user = request.user
+#     #         this_event = Event.objects.get(ecode=code)
+#     #         this_event.add_user_to_list_of_attendees(user=user)
+#     #         this_event.eattendees.add(user)
+#     #         messages.success(
+#     #             request, f'You have been added to attendee list of {this_event.ename}')
+#     #         return redirect("ehandler:event-detail", pk=this_event.pk)
+#     #     elif code != this_event.ecode:
+#     #         messages.warning(
+#     #             request, f'Please enter the correct event code')
+#     #         return redirect("ehandler:event-join-code")
+#     return render(request, "ehandler/event_join_code.html")

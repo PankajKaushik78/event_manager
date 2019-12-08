@@ -12,16 +12,9 @@ from .views import (
 
 app_name = "ehandler"
 
-# event_patterns = ([
-#     path('<int:pk>/update/', EventUpdateView.as_view(), name='event-update'),
-#     path('new/', EventCreateView.as_view(),
-#          name='event-create'),
-# ], 'ehandler')
-
 urlpatterns = [
     path('', EventListView.as_view(), name='ehandler-home'),
     path('event/<int:pk>/', EventDetailView.as_view(), name='event-detail'),
-    # path('event/', include(event_patterns)),
     path('event/new/', EventCreateView.as_view(),
          name='event-create'),
     path('event/<int:pk>/update/', EventUpdateView.as_view(), name='event-update'),
@@ -36,8 +29,4 @@ urlpatterns = [
          name='user-event-list'),
     path('event/myevents/<int:pk>', ehandler_views.event_analysis,
          name='user-event-analysis'),
-
-    # path('event/<int:pk>/join', ehandler_views.code_check, name='event-join'),
-    # url(r'^event/(?P<pk>\d+)/join/$', ehandler_views.code_check, name='event-join'),
-
 ]

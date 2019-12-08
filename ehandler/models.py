@@ -6,9 +6,8 @@ from django.db.models.signals import pre_save
 from ehandler.utils import unique_event_code_generator
 from django.utils import timezone
 
-# Create your models here.
 
-
+# Event model contains all the info of a particular event
 class Event(models.Model):
     ename = models.CharField(max_length=100, verbose_name="Event Title")
     econtent = models.TextField(verbose_name="Event Details")
@@ -40,8 +39,9 @@ class Event(models.Model):
         registration.delete()
 
 
+# This model relates attendees with the event
 class EventRegistration(models.Model):
-    # here 'user' are the attendee of the event
+    # 'user' corresponds to the attendee of the event
     user = models.ForeignKey(
         User, on_delete=models.CASCADE, verbose_name='Attendee')
     event = models.ForeignKey(
@@ -62,9 +62,8 @@ class EventRegistration(models.Model):
             self.time_registered = datetime.datetime.now()
         super(EventRegistration, self).save(*args, **kwargs)
 
+
 # Code for generating unique event code and saving it in Event.ecode
-
-
 def pre_save_create_event_code(sender, instance, *args, **kwargs):
     if not instance.ecode:
         instance.ecode = unique_event_code_generator(instance)

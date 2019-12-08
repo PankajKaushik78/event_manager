@@ -1,9 +1,12 @@
 {% extends "ehandler/base.html" %}
 {% block content %}
-
+<br>
 <!-- <div class="col-md-8"> -->
+
 <div class="container">
+    <h2 class="text-primary text-center">Other Active Events</h2>
     {% for event in events %}
+    {% if event.eowner != user %}
     <article class="media content-section">
         <div class="media-body">
             <h2><a class="article-title" href="{% url 'ehandler:event-detail' event.id %}">{{ event.ename }}</a>
@@ -19,6 +22,7 @@
                 role="button">Check it out</a>
         </div>
     </article>
+    {% endif %}
     {% endfor %}
 
 </div>
