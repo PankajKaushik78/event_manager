@@ -1,4 +1,6 @@
 # event_handler
-This is Event handler web app
+This repo contains the source code for event manager api.
+
+
 
 
