@@ -1,6 +1,7 @@
 # event_handler
 This repo contains the source code for event manager api.
 <hr>
+
 Register as a new user
 ![Register](images/register.png)
 
